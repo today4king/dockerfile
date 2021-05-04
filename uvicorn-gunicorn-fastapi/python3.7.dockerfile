@@ -6,9 +6,10 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
     ln -s /opt/poetry/bin/poetry && \
     poetry config virtualenvs.create false
 
-# Copy using poetry.lock* in case it doesn't exist yet
-COPY ./app/pyproject.toml ./app/poetry.lock* /app/
-
-RUN poetry install --no-root --no-dev
-
-COPY ./app /app
+# good for solo
+RUN mkdir /app
+RUN mkdir -p ~/.ssh
+WORKDIR /app
+RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get -y --force-yes  dist-upgrade && \
+    apt-get -y --force-yes install  mc curl wget ssh && \
+    apt-get autoremove && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
