@@ -7,7 +7,6 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
     poetry config virtualenvs.create false
 
 # good for solo
-RUN mkdir /app
 RUN mkdir -p ~/.ssh
 WORKDIR /app
 RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get -y --force-yes  dist-upgrade && \
