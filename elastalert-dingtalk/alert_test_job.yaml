@@ -1,0 +1,41 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: alert-test-job
+  namespace: es
+spec:
+  parallelism: 1
+  completions: 1
+  template:
+    spec:
+      imagePullSecrets:                 ##增加该项
+        - name: cnblogs-rep
+      containers:
+      - name: elastalert
+        #image: jertel/elastalert-docker:0.2.4
+        image: registry.cn-hangzhou.aliyuncs.com/cnblogs-dev/elastalert-docker:lastest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: "Asia/Shanghai"
+        volumeMounts:
+        - name: config
+          mountPath: /opt/config
+        - name: auth
+          mountPath: /opt/auth
+        - name: rules
+          mountPath: /opt/rules
+        command: ['sh', '-c', 'elastalert-test-rule --alert --config /opt/config/elastalert_config.yaml  /opt/rules/rule_config_dummy.yaml']
+            # fluented 默认创建的index形如'logstash-2020.01.01'
+      restartPolicy: Never
+      volumes:
+      - name: auth
+        secret:
+          secretName: smtp-auth
+      - name: rules
+        configMap:
+          name: elastalert-rules
+      - name: config
+        configMap:
+          name: elastalert-config

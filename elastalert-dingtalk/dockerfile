@@ -1,0 +1,9 @@
+FROM jertel/elastalert-docker
+
+
+RUN pip install requests pyOpenSSL
+
+COPY "./elastalert_modules/" "/usr/local/lib/python3.6/site-packages/elastalert_modules"
+
+WORKDIR /opt/elastalert
+ENTRYPOINT ["/opt/elastalert/run.sh"]
